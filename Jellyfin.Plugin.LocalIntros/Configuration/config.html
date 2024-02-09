@@ -268,11 +268,14 @@
                     if (document.querySelector('#studioWildcard').checked)
                         studio = $('#studioWildcardEntry').val();
 
+                    var wildcard = (document.querySelector('#studioWildcard').checked) ? 1 : 0;
+
                     var studioRule = {
                         IntroId: introId,
                         StudioName: studio,
                         Precedence: precedence,
-                        Prevalence: prevalence
+                        Prevalence: prevalence,
+                        Wildcard: wildcard
                     };
                     localIntroConfig.StudioIntros.push(studioRule);
                 };

@@ -62,4 +62,5 @@ public class StudioIntro : ISpecialIntro
     public string StudioName { get; set; }
     public int Precedence { get; set; }
     public int Prevalence { get; set; }
+    public int Wildcard { get; set; } = 0; //0 - disabled, 1 - Start, possibility for fancier options here hence why i didn't use a bool
 }
