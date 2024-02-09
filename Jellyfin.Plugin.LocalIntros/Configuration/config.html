@@ -54,6 +54,11 @@
                         </select>
                         <div class="fieldDescription">Genre to use for intros</div>
                     </div>
+                    <div class="inputContainer">
+                        <label class="inputLabel inputLabelUnfocused" for="studioWildcardEntry">Studio</label>
+                        <input id="studioWildcardEntry" is="emby-input" />
+                        <div class="fieldDescription">Will match any studio starting with this text</div>
+                    </div>
                     <div class="inputContainer" id="studioSection">
                         <label class="inputLabel inputLabelUnfocused" for="studioSelection">Studio</label>
                         <select id="studioSelection" is="emby-select">
@@ -63,11 +68,9 @@
                     <div class="inputContainer" id="currentDateSection">
                         <label class="inputLabel inputLabelUnfocused" for="currentDateStart">Start Date</label>
                         <input id="currentDateStart" is="emby-input" type="date">
-                        </input>
                         <div class="fieldDescription">Start Date for intros</div>
                         <label class="inputLabel inputLabelUnfocused" for="currentDateEnd">End Date</label>
                         <input id="currentDateEnd" is="emby-input" type="date">
-                        </input>
                         <div class="fieldDescription">End Date for intros</div>
                     </div>
                     <div class="inputContainer">
@@ -85,6 +88,12 @@
                         <label class="inputLabel inputLabelUnfocused" for="rulePrecedence">Precedence</label>
                         <input id="rulePrecedence" is="emby-input" type="number" value="1" min="1" name="rulePrecedence" />
                         <div class="fieldDescription">How important is the rule. If multiple rules both apply, only the ones with the highest equal precendence will be used for calculations.</div>
+                    </div>
+                    <div class="checkboxContainer checkboxContainer-withDescription">
+                        <label class="emby-checkbox-label">
+                            <input id="studioWildcard" type="checkbox" is="emby-checkbox" />
+                            <span>Wildcard Support</span>
+                        </label>
                     </div>
 
                     <div class="inputContainer">
@@ -255,9 +264,14 @@
                 };
                 var addStudioIntroRule = (introId, precedence, prevalence) => 
                 {
+                    var studio = $('#studioSelection').val();
+
+                    if (document.querySelector('#studioWildcard').checked) 
+                        studio = $('#studioWildcardEntry').val();
+
                     var studioRule = {
                         IntroId: introId,
-                        StudioName: $('#studioSelection').val(),
+                        StudioName: studio,
                         Precedence: precedence,
                         Prevalence: prevalence
                     };
@@ -284,54 +298,52 @@
                 var saveChanges = () => 
                     ApiClient.updatePluginConfiguration(plugin.guid, localIntroConfig);
 
+                var toggleStudioWildcard = () =>
+                {
+                    if (document.querySelector('#studioWildcard').checked) {
+                        $('#studioSection').hide();
+                        $('#studioWildcardEntry').show();
+                    } else {
+                        $('#studioSection').show();
+                        $('#studioWildcardEntry').hide();
+                    }
+                }
+
                 var updateUi = () => {
-
-
                     var ruleType = $('#ruleSelection').val();
+                    $('#tagSection').hide();
+                    $('#genreSection').hide();
+                    $('#studioSection').hide();
+                    $('#studioWildcardEntry').hide();
+                    $('#studioWildcard').hide();
+                    $('#currentDateSection').hide();
+                    $('#prevalenceSection').hide();
+                    $('#precedenceSection').hide();
+                    $('#addAllSection').hide();
                     switch (ruleType) {
                         case 'tag':
                             $('#tagSection').show();
-                            $('#genreSection').hide();
-                            $('#studioSection').hide();
-                            $('#currentDateSection').hide();
                             $('#prevalenceSection').show();
                             $('#precedenceSection').show();
-                            $('#addAllSection').hide();
                             break;
                         case 'genre':
-                            $('#tagSection').hide();
                             $('#genreSection').show();
-                            $('#studioSection').hide();
-                            $('#currentDateSection').hide();
                             $('#prevalenceSection').show();
                             $('#precedenceSection').show();
-                            $('#addAllSection').hide();
                             break;
                         case 'studio':
-                            $('#tagSection').hide();
-                            $('#genreSection').hide();
+                            document.querySelector('#studioWildcard').checked = false;
                             $('#studioSection').show();
-                            $('#currentDateSection').hide();
                             $('#prevalenceSection').show();
                             $('#precedenceSection').show();
-                            $('#addAllSection').hide();
+                            $('#studioWildcardEntry').show();
                             break;
                         case 'currentDate':
-                            $('#tagSection').hide();
-                            $('#genreSection').hide();
-                            $('#studioSection').hide();
                             $('#currentDateSection').show();
                             $('#prevalenceSection').show();
                             $('#precedenceSection').show();
-                            $('#addAllSection').hide();
                             break;
                         case 'default':
-                            $('#tagSection').hide();
-                            $('#genreSection').hide();
-                            $('#studioSection').hide();
-                            $('#currentDateSection').hide();
-                            $('#prevalenceSection').hide();
-                            $('#precedenceSection').hide();
                             $('#addAllSection').show();
                             break;
                     }
